@@ -1,0 +1,24 @@
+services:
+  api:
+    volumes:
+      - ./api:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/SentinelX_db
+      DATABASE_ECHO: "False"
+      SECRET_KEY: dev-secret
+      API_KEY: dev-key
+      LOG_LEVEL: INFO
+
+  frontend:
+    build:
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports: !override
+      - "3000:3000"
+    environment:
+      VITE_API_KEY: dev-key
+    command: npm run dev -- --host 0.0.0.0 --port 3000
+
